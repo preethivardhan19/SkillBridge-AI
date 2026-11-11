@@ -229,15 +229,24 @@ http://127.0.0.1:8000/docs
 
 ## 📸 Screenshots
 
-Application screenshots will be added here to demonstrate:
 
-- Homepage and navigation
-- User Profile
-- Career Dashboard
-- Skill Gap Analysis
-- Personalized Learning Roadmap
-- Opportunity Matching
-- AI Career Assistant
+## 📸 Application Screenshots
+
+### 1. Homepage
+![SkillBridge AI Homepage](screenshots/01-homepage.png)
+
+### 2. Career Dashboard
+![Career Dashboard](screenshots/02-career-dashboard.png)
+
+### 3. Skill Gap Analysis
+![Skill Gap Analysis](screenshots/03-skill-gap-analysis.png)
+
+### 4. Skill Readiness and Learning Roadmap
+![Skill Readiness and Learning Roadmap](screenshots/04-skill-readiness-roadmap.png)
+
+### 5. AI Career Assistant
+![AI Career Assistant](screenshots/05-ai-career-assistant.png)
+
 
 ---
 
