@@ -1,6 +1,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import "./CareerAssistant.css";
+import API_URL from "./api";
 
 const initialMessage = {
   sender: "assistant",
@@ -75,7 +76,7 @@ function CareerAssistant({ onBack }) {
           : [];
 
       const response = await fetch(
-        "http://127.0.0.1:8000/assistant",
+        `${API_URL}/assistant`,
         {
           method: "POST",
           headers: {

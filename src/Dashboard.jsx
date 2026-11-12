@@ -1,8 +1,7 @@
 
 import { useEffect, useState } from "react";
 import "./Dashboard.css";
-
-const API_URL = "http://127.0.0.1:8000";
+import API_URL from "./api";
 
 function Dashboard({
   onBack,

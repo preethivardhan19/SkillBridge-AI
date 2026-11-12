@@ -1,8 +1,8 @@
 
 import { useEffect, useState } from "react";
 import "./Profile.css";
+import API_URL from "./api";
 
-const API_URL = "http://127.0.0.1:8000";
 
 function Profile({ onBack }) {
   const [form, setForm] = useState(() => {

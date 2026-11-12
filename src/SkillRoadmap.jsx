@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import "./SkillRoadmap.css";
+import API_URL from "./api";
 
 const careerSkills = {
   "Data Analyst": [
@@ -121,7 +122,6 @@ const learningResources = {
 
 function SkillRoadmap({ onBack }) {
 
-  const API_URL = "http://127.0.0.1:8000";
 
   const [savedProfile] = useState(() => {
     try {

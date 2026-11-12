@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./Opportunities.css";
+import API_URL from "./api";
 
 function Opportunities({ onBack }) {
   const savedProfile = (() => {
@@ -49,7 +50,7 @@ function Opportunities({ onBack }) {
     try {
       const [matchResponse, recommendationResponse] =
         await Promise.all([
-          fetch("http://127.0.0.1:8000/match", {
+          fetch(`${API_URL}/match`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
@@ -60,7 +61,7 @@ function Opportunities({ onBack }) {
             })
           }),
 
-          fetch("http://127.0.0.1:8000/recommend", {
+          fetch(`${API_URL}/recommend`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
