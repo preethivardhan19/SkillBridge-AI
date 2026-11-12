@@ -149,7 +149,8 @@ ALIASES = {
     "powerbi": "power bi",
     "rest apis": "rest api",
     "js": "javascript",
-    "py": "python"
+    "py": "python",
+    "torch": "pytorch"
 }
 
 
