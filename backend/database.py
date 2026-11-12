@@ -1,27 +1,52 @@
 
-import sqlite3
 import json
+import os
+import sqlite3
 from pathlib import Path
 
+from dotenv import load_dotenv
+import psycopg
+from psycopg.rows import dict_row
 
-# Database file stored inside the backend folder
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
 DATABASE_PATH = Path(__file__).resolve().parent / "skillbridge.db"
 
 
 def get_connection():
+    if DATABASE_URL:
+        return psycopg.connect(
+            DATABASE_URL,
+            row_factory=dict_row
+        )
+
     connection = sqlite3.connect(DATABASE_PATH)
     connection.row_factory = sqlite3.Row
     return connection
 
 
-def initialize_database():
+def execute_query(connection, query, params=()):
+    if DATABASE_URL:
+        query = query.replace("?", "%s")
 
+    return connection.execute(query, params)
+
+
+def initialize_database():
     connection = get_connection()
 
     try:
-        connection.execute("""
+        if DATABASE_URL:
+            profile_id = "BIGSERIAL PRIMARY KEY"
+            progress_id = "BIGSERIAL PRIMARY KEY"
+        else:
+            profile_id = "INTEGER PRIMARY KEY AUTOINCREMENT"
+            progress_id = "INTEGER PRIMARY KEY AUTOINCREMENT"
+
+        execute_query(connection, f"""
             CREATE TABLE IF NOT EXISTS student_profiles (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id {profile_id},
                 name TEXT NOT NULL,
                 email TEXT NOT NULL UNIQUE,
                 education TEXT,
@@ -29,17 +54,17 @@ def initialize_database():
                 skills TEXT NOT NULL DEFAULT '[]',
                 preferred_role TEXT DEFAULT 'Any',
                 location TEXT,
-                updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
 
-        connection.execute("""
+        execute_query(connection, f"""
             CREATE TABLE IF NOT EXISTS learning_progress (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id {progress_id},
                 student_email TEXT NOT NULL,
                 skill_name TEXT NOT NULL,
                 completed INTEGER NOT NULL DEFAULT 0,
-                updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(student_email, skill_name)
             )
         """)
@@ -51,20 +76,13 @@ def initialize_database():
 
 
 def save_student_profile(profile):
-
     connection = get_connection()
 
     try:
-        connection.execute("""
+        execute_query(connection, """
             INSERT INTO student_profiles (
-                name,
-                email,
-                education,
-                graduation,
-                skills,
-                preferred_role,
-                location,
-                updated_at
+                name, email, education, graduation,
+                skills, preferred_role, location, updated_at
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
 
@@ -94,11 +112,10 @@ def save_student_profile(profile):
 
 
 def get_student_profile(email):
-
     connection = get_connection()
 
     try:
-        row = connection.execute("""
+        row = execute_query(connection, """
             SELECT * FROM student_profiles
             WHERE email = ?
         """, (email,)).fetchone()
@@ -114,21 +131,14 @@ def get_student_profile(email):
     finally:
         connection.close()
 
-# --------------------------------------------------
-# LEARNING PROGRESS DATABASE FUNCTIONS
-# --------------------------------------------------
 
 def save_learning_progress(email, skill_name, completed):
-
     connection = get_connection()
 
     try:
-        connection.execute("""
+        execute_query(connection, """
             INSERT INTO learning_progress (
-                student_email,
-                skill_name,
-                completed,
-                updated_at
+                student_email, skill_name, completed, updated_at
             )
             VALUES (?, ?, ?, CURRENT_TIMESTAMP)
 
@@ -150,11 +160,10 @@ def save_learning_progress(email, skill_name, completed):
 
 
 def get_learning_progress(email):
-
     connection = get_connection()
 
     try:
-        rows = connection.execute("""
+        rows = execute_query(connection, """
             SELECT skill_name
             FROM learning_progress
             WHERE student_email = ?
